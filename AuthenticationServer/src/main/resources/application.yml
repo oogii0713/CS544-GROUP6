@@ -1,0 +1,23 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: AuthenticationService
+  datasource:
+    url: jdbc:mysql://localhost/cs544?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: cs544
+    password: 201511
+    driverClassName: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: create-drop
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
