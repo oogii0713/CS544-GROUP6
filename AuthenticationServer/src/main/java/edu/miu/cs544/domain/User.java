@@ -1,25 +1,18 @@
 package edu.miu.cs544.domain;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
-@Table(	name = "user")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String firstName;
-	private String lastName;
-
-	@Temporal(TemporalType.DATE)
-	private Date dateOfBirth;
 
 	@Column(unique = true)
-	private String email;
+	private String username;
 	private String password;
+
+	private Integer passengerId;
 
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Role role;
@@ -27,16 +20,8 @@ public class User {
 	public User() {
 	}
 
-	public User(String email, String password) {
-		this.email = email;
-		this.password = password;
-	}
-
-	public User(String firstName, String lastName, Date dateOfBirth, String email, String password) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.dateOfBirth = dateOfBirth;
-		this.email = email;
+	public User(String username, String password) {
+		this.username = username;
 		this.password = password;
 	}
 
@@ -44,12 +29,12 @@ public class User {
 		return id;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String email) {
+		this.username = email;
 	}
 
 	public String getPassword() {
@@ -60,35 +45,19 @@ public class User {
 		this.password = password;
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public Date getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-
 	public Role getRole() {
 		return role;
 	}
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public Integer getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Integer passengerId) {
+		this.passengerId = passengerId;
 	}
 }

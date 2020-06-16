@@ -3,7 +3,6 @@ package edu.miu.cs544.security.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.miu.cs544.domain.ERole;
 import edu.miu.cs544.domain.User;
@@ -16,24 +15,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class JwtUserDetails implements UserDetails {
 
 	private final Integer id;
-	private final String email;
+	private final String username;
 	private final String password;
 	private final ERole role;
+	private final Integer passengerId;
 
-	public JwtUserDetails(Integer id, String email, String password, ERole role) {
+	public JwtUserDetails(Integer id, String username, String password, ERole role, Integer passengerId) {
 		this.id = id;
-		this.email = email;
+		this.username = username;
 		this.password = password;
 		this.role = role;
+		this.passengerId = passengerId;
 	}
 
 
 	public static JwtUserDetails build(User user) {
 		return new JwtUserDetails(
 				user.getId(),
-				user.getEmail(),
+				user.getUsername(),
 				user.getPassword(),
-				user.getRole().getName());
+				user.getRole().getName(),
+				user.getPassengerId());
 	}
 
 	@JsonIgnore
@@ -43,11 +45,7 @@ public class JwtUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return email;
-	}
-
-	public String getEmail() {
-		return email;
+		return username;
 	}
 
 	@JsonIgnore
@@ -76,13 +74,17 @@ public class JwtUserDetails implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(role.toString()));
 		return authorities;
 	}
 
 	public String getRole() {
-		return role.toString();
+		return role.toString().substring(5);
+	}
+
+	public Integer getPassengerId() {
+		return passengerId;
 	}
 
 	@Override

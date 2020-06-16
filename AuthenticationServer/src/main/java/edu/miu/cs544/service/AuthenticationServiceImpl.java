@@ -2,7 +2,7 @@ package edu.miu.cs544.service;
 
 import edu.miu.cs544.security.jwt.JwtUtils;
 import edu.miu.cs544.security.service.JwtUserDetails;
-import edu.miu.cs544.service.response.TokenValidationResponse;
+import edu.miu.cs544.service.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,31 +19,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     JwtUtils jwtUtils;
 
-    public TokenValidationResponse validateToken(String token) {
+    public UserResponse validateToken(String token) {
 
-        String email = null;
-        TokenValidationResponse tokenValidationResponse = new TokenValidationResponse();
+        String email;
+        UserResponse userResponse = new UserResponse();
 
         try {
             email = jwtUtils.getUsernameFromToken(token);
             if (email != null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
                 if (jwtUtils.validateToken(token, userDetails)) {
-                    return constructTokenResponse((JwtUserDetails)userDetails, tokenValidationResponse);
+                    return constructTokenResponse((JwtUserDetails)userDetails, userResponse);
                 }
             }
         } catch (Exception e) {
-            tokenValidationResponse.setValid(false);
-
+            userResponse.setValid(false);
         }
-        return tokenValidationResponse;
+
+        return userResponse;
     }
 
-    private TokenValidationResponse constructTokenResponse(JwtUserDetails userDetails, TokenValidationResponse tokenValidationResponse) {
-        tokenValidationResponse.setValid(true);
-        tokenValidationResponse.setUsername(userDetails.getUsername());
+    private UserResponse constructTokenResponse(JwtUserDetails userDetails, UserResponse userResponse) {
+        userResponse.setId(userDetails.getId());
+        userResponse.setValid(true);
+        userResponse.setEmail(userDetails.getUsername());
+        userResponse.setRole(userDetails.getRole());
+        userResponse.setPassengerId(userDetails.getPassengerId());
 
-        tokenValidationResponse.setRole(userDetails.getRole());
-        return tokenValidationResponse;
+        return userResponse;
     }
 }

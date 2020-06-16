@@ -23,8 +23,6 @@ public class Application implements CommandLineRunner {
     @Autowired
     private UserRepository userRepository;
 
-    private DateFormat dateFormat = new SimpleDateFormat("MM dd, yyyy");
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -33,19 +31,14 @@ public class Application implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Role adminRole = new Role(ERole.ROLE_ADMIN);
         Role agentRole = new Role(ERole.ROLE_AGENT);
-        Role passengerRole = new Role(ERole.ROLE_PASSENGER);;
+        Role passengerRole = new Role(ERole.ROLE_PASSENGER);
 
-        Address residenceAddress1 = new Address("1000N 4th str","Fairfield","IA","52557");
-        Address residenceAddress2 = new Address("1000N 3th str","Chicago","IL","52556");
-        Address residenceAddress3 = new Address("1000N 2th str","Chicago","IL","52555");
-        Address residenceAddress4 = new Address("1000N 1th str","Chicago","IL","52554");
-
-        User admin = new Admin("admin", "admin", dateFormat.parse("08 07, 1987"), "admin@miu.edu", encodePassword("admin"));
-        User agent1 = new Agent("agent", "agent", dateFormat.parse("08 07, 1987"), "agent@miu.edu", encodePassword("agent"));
-        User passenger1 = new Passenger("Otgonbayar", "Otgonbayar", dateFormat.parse("08 07, 1987"), "pass1@miu.edu", encodePassword("pass"), residenceAddress1);
-        User passenger2 = new Passenger("Nahom", "Berta", dateFormat.parse("08 07, 1987"), "pass2@miu.edu", encodePassword("pass"), residenceAddress2);
-        User passenger3 = new Passenger("Yodit", "Wondaferew ", dateFormat.parse("08 07, 1987"), "pass3@miu.edu", encodePassword("pass"), residenceAddress3);
-        User passenger4 = new Passenger("Thi Le", "Nguyen", dateFormat.parse("08 07, 1987"), "pass4@miu.edu", encodePassword("pass"), residenceAddress4);
+        User admin = new User("admin@miu.edu", encodePassword("admin"));
+        User agent1 = new User("agent@miu.edu", encodePassword("agent"));
+        User passenger1 = new User("pass1@miu.edu", encodePassword("pass"));
+        User passenger2 = new User("pass2@miu.edu", encodePassword("pass"));
+        User passenger3 = new User("pass3@miu.edu", encodePassword("pass"));
+        User passenger4 = new User("pass4@miu.edu", encodePassword("pass"));
 
         admin.setRole(adminRole);
         agent1.setRole(agentRole);
@@ -53,6 +46,10 @@ public class Application implements CommandLineRunner {
         passenger2.setRole(passengerRole);
         passenger3.setRole(passengerRole);
         passenger4.setRole(passengerRole);
+        passenger1.setPassengerId(10000);
+        passenger2.setPassengerId(10001);
+        passenger3.setPassengerId(10002);
+        passenger4.setPassengerId(10003);
 
         userRepository.saveAll(Arrays.asList(passenger1, passenger2, passenger3, passenger4, admin, agent1));
     }

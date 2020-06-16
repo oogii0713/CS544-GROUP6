@@ -4,10 +4,10 @@ import edu.miu.cs544.domain.*;
 import edu.miu.cs544.exception.EmailAlreadyExistException;
 import edu.miu.cs544.repository.RoleRepository;
 import edu.miu.cs544.repository.UserRepository;
-import edu.miu.cs544.service.request.SignupRequest;
+import edu.miu.cs544.service.request.UserRequest;
+import edu.miu.cs544.service.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,26 +26,24 @@ public class RegistrationServiceImpl implements RegistrationService {
     
 
     @Transactional
-    public void saveUser(SignupRequest signupRequest, ERole roleType) throws EmailAlreadyExistException {
+    @Override
+    public UserResponse saveUser(UserRequest userRequest, ERole roleType) throws EmailAlreadyExistException {
+        isUserNameExists(userRequest.getEmail());
 
-        isEmailExist(signupRequest.getEmail());
-
-        User user = null;
-        switch (roleType) {
-            case ROLE_PASSENGER:
-                Address address = new Address(signupRequest.getStreet(), signupRequest.getCity(), signupRequest.getState(), signupRequest.getZip());
-                user = new Passenger(signupRequest.getFirstName(), signupRequest.getLastName(), signupRequest.getDateOfBirth(), signupRequest.getEmail(), encodePassword(signupRequest.getPassword()), address);
-                break;
-            case ROLE_AGENT:
-                user = new Agent(signupRequest.getFirstName(), signupRequest.getLastName(), signupRequest.getDateOfBirth(), signupRequest.getEmail(), encodePassword(signupRequest.getPassword()));
-                break;
-
+        User user;
+        if (roleType.equals(ERole.ROLE_PASSENGER)) {
+            user = new User(userRequest.getEmail(), encodePassword(userRequest.getPassword()));
+            user.setPassengerId(userRequest.getPassengerId());
+        } else {
+            user = new User(userRequest.getEmail(), encodePassword(userRequest.getPassword()));
         }
 
         Role role = roleRepository.findByName(roleType).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRole(role);
 
         userRepository.save(user);
+
+        return new UserResponse(user.getId(), user.getUsername(), user.getRole().toString(), user.getPassengerId(), true);
 
     }
 
@@ -54,9 +52,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     }
 
-    private void isEmailExist(String email) throws EmailAlreadyExistException {
-        if (userRepository.existsByEmail(email))
-            throw new EmailAlreadyExistException("Error: Email is already in use!");
+    private void isUserNameExists(String username) throws EmailAlreadyExistException {
+        if (userRepository.existsByUsername(username))
+            throw new EmailAlreadyExistException("Email is already registered!");
     }
 
 }
