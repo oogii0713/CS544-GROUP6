@@ -40,10 +40,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         Role role = roleRepository.findByName(roleType).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRole(role);
-
         userRepository.save(user);
 
-        return new UserResponse(user.getId(), user.getUsername(), user.getRole().toString(), user.getPassengerId(), true);
+        return new UserResponse(user.getId(), user.getUsername(), role.getName().toString().substring(5), user.getPassengerId(), true);
 
     }
 
